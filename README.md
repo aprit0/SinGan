@@ -1,0 +1,2 @@
+# SinGan
+Time Series GAN
