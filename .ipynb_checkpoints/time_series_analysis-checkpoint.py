@@ -13,11 +13,10 @@ class ts_analyser():
         #data
         self.epoch = epoch
         self.ts_data = ts_data
-#         print('ts_analyser data shape: ', ts_data.shape)
+        
         self.details()
     def details(self):
         #Distribution
-        #plt.figure()
         self.g = sns.displot(data=self.ts_data, kind="kde", height=4, aspect=1).set(title='{} epochs'.format(self.epoch))
         
 
@@ -40,7 +39,6 @@ class ts_analyser():
             }
         }
     def comparison(self, data_new, title='', label=['original', 'new'], show=False):
-#         print('comp shape: ',self.ts_data.shape, data_new.shape)
         #Kolmogorov-Smirnov test
         k_stat = st.ks_2samp(self.ts_data, data_new)
         self.KS = {
@@ -48,7 +46,6 @@ class ts_analyser():
             'k_p':k_stat[1]
         }
         #Granger Causality test
-        #x = np.concatenate((np.expand_dims(self.ts_data, 1), np.expand_dims(data_new, 1)), axis=1), pvalue of 0.71
         x = np.concatenate((np.expand_dims(data_new, 1), np.expand_dims(self.ts_data, 1)), axis=1)
         g_stat = grangercausalitytests(x, maxlag=[1], verbose=0)
         self.granger = {'g_stat':g_stat[1][0]['ssr_ftest'][0],
@@ -64,7 +61,5 @@ class ts_analyser():
             self.h.savefig('comparison/KS_{}_dist_{}.png'.format(self.epoch, time.time()))
             self.g.savefig('distribution/{}_dist_{}.png'.format(self.epoch, time.time()))
             plt.show()
-#         self.h.fig.clf() 
-#         self.g.fig.clf() 
         plt.close('all') 
             

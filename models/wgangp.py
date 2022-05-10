@@ -75,7 +75,7 @@ class Critic(nn.Module):
         
         self.calc_flattended = int(np.ceil((((features+2) * 0.5 * 0.5 ) + 2)))*32
         self.main = create_critic_architecture(self.calc_flattended)
-        self.linear = nn.Sequential(nn.Linear(640, 50),
+        self.linear = nn.Sequential(nn.Linear(800, 50),
                          nn.LeakyReLU(0.2, inplace=True),
 
                          nn.Linear(50, 15),
@@ -84,8 +84,7 @@ class Critic(nn.Module):
                          nn.Linear(15, 1)
                          )
     def forward(self, input):
-        #print('C_in', input.shape)
         a = self.main(input)
-        #print('C_a', a.shape, self.calc_flattended)
+#         print('C_a', a.shape)
         out = self.linear(a)
         return out
