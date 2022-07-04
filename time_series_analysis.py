@@ -6,15 +6,26 @@ import seaborn as sns
 import time
 from statsmodels.tsa.stattools import grangercausalitytests
 from sklearn.metrics import r2_score
-
+import os
 
 class ts_analyser():
     def __init__(self, ts_data, epoch):
         #data
         self.epoch = epoch
         self.ts_data = ts_data
-        
+         
+        self.dir_setup()
         self.details()
+    
+    
+    def dir_setup():
+        PATH = os.getcwd()
+        folder_list = ['Output/comparison/', 'Output/distribution/']
+        for folder in folder_list:
+            new_path = os.path.join(PATH,folder)
+            if not os.path.isfile(new_path):
+                os.mkdir(new_path)
+    
     def details(self):
         #Distribution
         self.g = sns.displot(data=self.ts_data, kind="kde", height=4, aspect=1).set(title='{} epochs'.format(self.epoch))
@@ -58,8 +69,8 @@ class ts_analyser():
         self.r_score = r2_score(data_new, self.ts_data)
         
         if show:
-            self.h.savefig('comparison/KS_{}_dist_{}.png'.format(self.epoch, time.time()))
-            self.g.savefig('distribution/{}_dist_{}.png'.format(self.epoch, time.time()))
+            self.h.savefig('Output/comparison/KS_{}_dist_{}.png'.format(self.epoch, time.time()))
+            self.g.savefig('Output/distribution/{}_dist_{}.png'.format(self.epoch, time.time()))
             plt.show()
         plt.close('all') 
             

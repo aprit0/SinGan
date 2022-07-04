@@ -45,6 +45,16 @@ class Trainer:
         self.g = self.g.to(self.device)
         self.c = self.c.to(self.device)
         print('CUDA Device used: ', self.device)
+        
+        
+    def dir_setup():
+        PATH = os.getcwd()
+        folder_list = ['Output/training_samples/', 'Output/ks_statistics/']
+        for folder in folder_list:
+            new_path = os.path.join(PATH,folder)
+            if not os.path.isfile(new_path):
+                os.mkdir(new_path)
+                
 
     def _critic_train_iteration(self, real_data):
 
@@ -179,14 +189,14 @@ class Trainer:
         for i in range(self.sample_count):
             plt.plot(fake_data_dynamic_latents[i].T)
         plt.title('dynamic latents, epoch {}'.format(epoch))
-        plt.savefig('training_samples/dynamic_latents/series_epoch_{}.png'.format(epoch))
+        plt.savefig('Output/training_samples/dynamic_latents/series_epoch_{}.png'.format(epoch))
         plt.show()
         plt.close()
 
         plt.figure()
         plt.plot(fake_data_fixed_latents[0].T)
         plt.title('fixed latents, epoch {}'.format(epoch))
-        plt.savefig('training_samples/fixed_latents/series_epoch_{}.png'.format(epoch))
+        plt.savefig('Output/training_samples/fixed_latents/series_epoch_{}.png'.format(epoch))
         plt.close()
         self.g.train()
 
@@ -227,7 +237,7 @@ class Trainer:
 
         f.legend()
         f.suptitle('series_epoch_{}'.format(epoch))
-        f.savefig('ks_statistics/series_epoch_{}_{:.5f}.png'.format(epoch, time.time()))
+        f.savefig('Output/ks_statistics/series_epoch_{}_{:.5f}.png'.format(epoch, time.time()))
         plt.show()
         plt.close('all') 
         
