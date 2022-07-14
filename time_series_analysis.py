@@ -18,13 +18,13 @@ class ts_analyser():
         self.details()
     
     
-    def dir_setup():
+    def dir_setup(self):
         PATH = os.getcwd()
         folder_list = ['Output/comparison/', 'Output/distribution/']
         for folder in folder_list:
             new_path = os.path.join(PATH,folder)
-            if not os.path.isfile(new_path):
-                os.mkdir(new_path)
+            if not os.path.isdir(new_path):
+                os.makedirs(new_path)
     
     def details(self):
         #Distribution

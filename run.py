@@ -16,12 +16,12 @@ from models.wgangp import Generator, Critic
 args = {}
 args['dataset'] = 'sines' #sines, arma, diy_sines
 args['log_name'] = 'disect'+'_{:.6f}'.format(time.time())
-args['epochs'] = 10000 #15000
+args['epochs'] = 100000 #15000
 args['lookback'] = 1
 args['batches'] = 16
 args['checkpoint_path'] = None
-args['store_every'] = 500
-args['print_every'] = 250
+args['store_every'] = 5000
+args['print_every'] = 2500
 args['sample_count'] = 5
 
 # Create Dataloader

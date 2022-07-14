@@ -12,7 +12,7 @@ from math import pi
 import numpy as np
 import time
 
-from datasets.datasets import Sines, ARMA
+from datasets import *
 from models.wgangp import Generator, Critic
 from time_series_analysis import ts_analyser
 
@@ -45,16 +45,15 @@ class Trainer:
         self.g = self.g.to(self.device)
         self.c = self.c.to(self.device)
         print('CUDA Device used: ', self.device)
+        self.dir_setup() 
         
-        
-    def dir_setup():
+    def dir_setup(self):
         PATH = os.getcwd()
-        folder_list = ['Output/training_samples/', 'Output/ks_statistics/']
+        folder_list = ['Output/training_samples/dynamic_latents', 'Output/training_samples/fixed_latents', 'Output/ks_statistics', 'Output/checkpoints']
         for folder in folder_list:
             new_path = os.path.join(PATH,folder)
-            if not os.path.isfile(new_path):
-                os.mkdir(new_path)
-                
+            if not os.path.isdir(new_path):
+                os.makedirs(new_path)
 
     def _critic_train_iteration(self, real_data):
 
@@ -86,7 +85,6 @@ class Trainer:
         latent_shape = (batch_size, self.NOISE_LENGTH)
 
         generated_data = self.sample_generator(latent_shape)
-
         # Calculate loss and optimize
         d_generated = self.c(generated_data)
         g_loss = - d_generated.mean()
@@ -136,7 +134,7 @@ class Trainer:
 
     def train(self, data_loader, epochs, plot_training_samples=True, checkpoint=None):
         if checkpoint:
-            path = os.path.join('checkpoints', checkpoint)
+            path = os.path.join('Output/checkpoints', checkpoint)
             state_dicts = torch.load(path, map_location=torch.device('cpu'))
             self.g.load_state_dict(state_dicts['g_state_dict'])
             self.c.load_state_dict(state_dicts['d_state_dict'])
@@ -149,8 +147,9 @@ class Trainer:
 
         # Fix latents to see how series generation improves during training
         self.fixed_latents = Variable(self.sample_latent(noise_shape)).to(self.device)
-
-        for epoch in tqdm(range(epochs)):
+        t_0 = time.time()
+        print('Training beginning')
+        for epoch in range(epochs):
             self._train_epoch(data_loader, epoch + 1)
     
             # Save checkpoint
@@ -161,10 +160,11 @@ class Trainer:
                     'g_state_dict': self.g.state_dict(),
                     'd_opt_state_dict': self.c_opt.state_dict(),
                     'g_opt_state_dict': self.g_opt.state_dict(),
-                }, 'checkpoints/epoch_{}.pkl'.format(epoch))
+                }, 'Output/checkpoints/epoch_{}.pkl'.format(epoch))
 
             if plot_training_samples and (epoch % self.print_every == 0):
                 self.validate(epoch, noise_shape)
+        print('Duration: {}'.format(time.time() - t_0))
     def validate(self, epoch, noise_shape):
         
         self.g.eval()

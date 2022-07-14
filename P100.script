@@ -1,0 +1,17 @@
+#!/bin/bash
+#SBATCH --job-name=hg
+#SBATCH --time=23:59:00
+#SBATCH --ntasks=3
+#SBATCH --partition=short,gpu
+#SBATCH --gres=gpu:P100:1
+#SBATCH --mem-per-cpu=32768
+#SBATCH --cpus-per-task=1
+
+##module load pytorch/1.5-cuda10
+##module load seaborn/0.11.2
+python3 run.py
+
+mail -s 'MONARCH Finished' apri0009@student.monash.edu <<< '__'
+
+exit 0
+
